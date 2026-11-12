@@ -6,7 +6,7 @@
 
 ## Current status
 
-PCore is at the initial foundation stage. The repository currently contains a WPF desktop application shell with a dark interface and working section navigation.
+PCore is at the initial foundation stage. The repository currently contains a WPF desktop application shell with a dark interface, working section navigation, and a Hardware page that reads system information through Windows WMI.
 
 Hardware values are intentionally shown as unavailable until real data providers are connected. PCore will not display fabricated monitoring values.
 
@@ -37,7 +37,8 @@ Hardware values are intentionally shown as unavailable until real data providers
 
 - Dashboard
 - CPU, GPU, RAM, disk, and network monitoring
-- Process and hardware information
+- Process information
+- Hardware information from Windows WMI (processor, graphics adapters, installed RAM, physical disks, OS version)
 - Gaming Center and PCore Overlay
 - Tools and benchmark
 - Monitoring history
