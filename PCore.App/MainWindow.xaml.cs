@@ -11,7 +11,10 @@ namespace PCore.App
         private readonly DispatcherTimer _monitorTimer;
         private SystemMonitor _systemMonitor;
         private readonly NetworkMonitor _networkMonitor = new NetworkMonitor();
-        private readonly ProcessMonitor _processMonitor = new ProcessMonitor();\n        private readonly HistoryStore _historyStore = new HistoryStore();\n        private readonly SettingsStore _settingsStore = new SettingsStore();\n        private UserSettings _settings;
+        private readonly ProcessMonitor _processMonitor = new ProcessMonitor();
+        private readonly HistoryStore _historyStore = new HistoryStore();
+        private readonly SettingsStore _settingsStore = new SettingsStore();
+        private UserSettings _settings;
 
         public MainWindow()
         {
@@ -54,7 +57,13 @@ namespace PCore.App
             if (_systemMonitor == null) return;
             try
             {
-                SystemMonitorSnapshot snapshot = _systemMonitor.Read();\n                CpuPageValue.Text = snapshot.CpuUsage.HasValue ? snapshot.CpuUsage.Value.ToString("0") + "%" : "Недоступно";\n                RamPageValue.Text = snapshot.RamUsedGb.HasValue && snapshot.RamTotalGb.HasValue ? snapshot.RamUsedGb.Value.ToString("0.0") + " / " + snapshot.RamTotalGb.Value.ToString("0.0") + " ГБ" : "Недоступно";\n                RamPageDetail.Text = snapshot.RamUsagePercent.HasValue ? "Используется " + snapshot.RamUsagePercent.Value.ToString("0") + "%" : "Процент использования недоступен";\n                DiskPageValue.Text = snapshot.DiskUsedGb.HasValue && snapshot.DiskTotalGb.HasValue ? snapshot.DiskUsedGb.Value.ToString("0.0") + " / " + snapshot.DiskTotalGb.Value.ToString("0.0") + " ГБ" : "Недоступно";\n                DiskPageDetail.Text = snapshot.DiskUsagePercent.HasValue ? "Занято " + snapshot.DiskUsagePercent.Value.ToString("0") + "%" : "Процент использования недоступен";\n                _historyStore.Add(new HistoryEntry { Timestamp = DateTime.Now, CpuPercent = snapshot.CpuUsage, RamPercent = snapshot.RamUsagePercent, DiskPercent = snapshot.DiskUsagePercent });
+                SystemMonitorSnapshot snapshot = _systemMonitor.Read();
+                CpuPageValue.Text = snapshot.CpuUsage.HasValue ? snapshot.CpuUsage.Value.ToString("0") + "%" : "Недоступно";
+                RamPageValue.Text = snapshot.RamUsedGb.HasValue && snapshot.RamTotalGb.HasValue ? snapshot.RamUsedGb.Value.ToString("0.0") + " / " + snapshot.RamTotalGb.Value.ToString("0.0") + " ГБ" : "Недоступно";
+                RamPageDetail.Text = snapshot.RamUsagePercent.HasValue ? "Используется " + snapshot.RamUsagePercent.Value.ToString("0") + "%" : "Процент использования недоступен";
+                DiskPageValue.Text = snapshot.DiskUsedGb.HasValue && snapshot.DiskTotalGb.HasValue ? snapshot.DiskUsedGb.Value.ToString("0.0") + " / " + snapshot.DiskTotalGb.Value.ToString("0.0") + " ГБ" : "Недоступно";
+                DiskPageDetail.Text = snapshot.DiskUsagePercent.HasValue ? "Занято " + snapshot.DiskUsagePercent.Value.ToString("0") + "%" : "Процент использования недоступен";
+                _historyStore.Add(new HistoryEntry { Timestamp = DateTime.Now, CpuPercent = snapshot.CpuUsage, RamPercent = snapshot.RamUsagePercent, DiskPercent = snapshot.DiskUsagePercent });
                 CpuUsageValue.Text = snapshot.CpuUsage.HasValue ? snapshot.CpuUsage.Value.ToString("0", CultureInfo.InvariantCulture) + "%" : "Ожидание...";
                 CpuUsageDetail.Text = snapshot.CpuUsage.HasValue ? "Текущая загрузка процессора" : "Сбор первого измерения";
                 RamUsageValue.Text = snapshot.RamUsedGb.HasValue && snapshot.RamTotalGb.HasValue
@@ -118,7 +127,31 @@ namespace PCore.App
             }
         }
 
-        private void RefreshProcesses_Click(object sender, RoutedEventArgs e) { LoadProcesses(); }\n\n        private void RefreshHistory_Click(object sender, RoutedEventArgs e) { LoadHistory(); }\n\n        private void LoadHistory()\n        {\n            var entries = _historyStore.ReadLatest(20);\n            if (entries.Count == 0) { HistorySummary.Text = "История пока пуста."; return; }\n            var latest = entries[0];\n            HistorySummary.Text = "Записей: " + entries.Count + " из последних измерений.\\nПоследнее измерение: " + latest.Timestamp.ToString("g") + "\\nCPU: " + (latest.CpuPercent.HasValue ? latest.CpuPercent.Value.ToString("0") + "%" : "Недоступно") + "\\nRAM: " + (latest.RamPercent.HasValue ? latest.RamPercent.Value.ToString("0") + "%" : "Недоступно") + "\\nDisk: " + (latest.DiskPercent.HasValue ? latest.DiskPercent.Value.ToString("0") + "%" : "Недоступно");\n        }\n\n        private void SaveSettings_Click(object sender, RoutedEventArgs e)\n        {\n            int index = RefreshIntervalBox.SelectedIndex;\n            _settings.RefreshSeconds = index == 2 ? 5 : (index == 1 ? 2 : 1);\n            _settings.NotificationsEnabled = NotificationsCheck.IsChecked == true;\n            _settingsStore.Save(_settings);\n            _monitorTimer.Interval = TimeSpan.FromSeconds(_settings.RefreshSeconds);\n            SettingsStatus.Text = "Настройки сохранены.";\n        }
+        private void RefreshProcesses_Click(object sender, RoutedEventArgs e) { LoadProcesses(); }
+
+        private void RefreshHistory_Click(object sender, RoutedEventArgs e) { LoadHistory(); }
+
+        private void LoadHistory()
+        {
+            var entries = _historyStore.ReadLatest(20);
+            if (entries.Count == 0) { HistorySummary.Text = "История пока пуста."; return; }
+            var latest = entries[0];
+            HistorySummary.Text = "Записей: " + entries.Count + " из последних измерений.\
+Последнее измерение: " + latest.Timestamp.ToString("g") + "\
+CPU: " + (latest.CpuPercent.HasValue ? latest.CpuPercent.Value.ToString("0") + "%" : "Недоступно") + "\
+RAM: " + (latest.RamPercent.HasValue ? latest.RamPercent.Value.ToString("0") + "%" : "Недоступно") + "\
+Disk: " + (latest.DiskPercent.HasValue ? latest.DiskPercent.Value.ToString("0") + "%" : "Недоступно");
+        }
+
+        private void SaveSettings_Click(object sender, RoutedEventArgs e)
+        {
+            int index = RefreshIntervalBox.SelectedIndex;
+            _settings.RefreshSeconds = index == 2 ? 5 : (index == 1 ? 2 : 1);
+            _settings.NotificationsEnabled = NotificationsCheck.IsChecked == true;
+            _settingsStore.Save(_settings);
+            _monitorTimer.Interval = TimeSpan.FromSeconds(_settings.RefreshSeconds);
+            SettingsStatus.Text = "Настройки сохранены.";
+        }
         private void RefreshHardware_Click(object sender, RoutedEventArgs e) { LoadHardwareInformation(); }
 
         private void LoadHardwareInformation()
@@ -166,7 +199,12 @@ namespace PCore.App
                 DashboardContent.Visibility = Visibility.Visible;
                 return;
             }
-            if (section == "Процессор") { PageSubtitle.Text = "Загрузка центрального процессора"; CpuContent.Visibility = Visibility.Visible; UpdateMonitoring(); return; }\n            if (section == "Оперативная память") { PageSubtitle.Text = "Использование физической памяти"; RamContent.Visibility = Visibility.Visible; UpdateMonitoring(); return; }\n            if (section == "Диски") { PageSubtitle.Text = "Занятое и свободное пространство"; DiskContent.Visibility = Visibility.Visible; UpdateMonitoring(); return; }\n            if (section == "История") { PageSubtitle.Text = "Локально сохранённые измерения"; HistoryContent.Visibility = Visibility.Visible; LoadHistory(); return; }\n            if (section == "Настройки") { PageSubtitle.Text = "Параметры работы приложения"; SettingsContent.Visibility = Visibility.Visible; return; }\n            if (section == "Оборудование")
+            if (section == "Процессор") { PageSubtitle.Text = "Загрузка центрального процессора"; CpuContent.Visibility = Visibility.Visible; UpdateMonitoring(); return; }
+            if (section == "Оперативная память") { PageSubtitle.Text = "Использование физической памяти"; RamContent.Visibility = Visibility.Visible; UpdateMonitoring(); return; }
+            if (section == "Диски") { PageSubtitle.Text = "Занятое и свободное пространство"; DiskContent.Visibility = Visibility.Visible; UpdateMonitoring(); return; }
+            if (section == "История") { PageSubtitle.Text = "Локально сохранённые измерения"; HistoryContent.Visibility = Visibility.Visible; LoadHistory(); return; }
+            if (section == "Настройки") { PageSubtitle.Text = "Параметры работы приложения"; SettingsContent.Visibility = Visibility.Visible; return; }
+            if (section == "Оборудование")
             {
                 PageSubtitle.Text = "Физические компоненты и сведения об операционной системе";
                 HardwareContent.Visibility = Visibility.Visible;
