@@ -52,8 +52,8 @@
 
                 <Border DockPanel.Dock="Bottom" Background="#1D1F25" CornerRadius="10" Padding="12" Margin="0,16,0,0">
                     <StackPanel>
-                        <TextBlock Text="PCore 0.1.0" FontWeight="SemiBold" FontSize="12"/>
-                        <TextBlock Text="Начальная версия" Foreground="#858891" FontSize="11" Margin="0,4,0,0"/>
+                        <TextBlock Text="PCore 0.2.0" FontWeight="SemiBold" FontSize="12"/>
+                        <TextBlock Text="Development build" Foreground="#858891" FontSize="11" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
             </DockPanel>
