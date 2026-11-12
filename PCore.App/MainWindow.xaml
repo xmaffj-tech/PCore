@@ -35,7 +35,14 @@
 
                     <TextBlock Text="ИНСТРУМЕНТЫ" Foreground="#686C75" FontSize="10" FontWeight="SemiBold" Margin="8,25,0,8"/>
                     <Button Content="  Игровой центр" Tag="Игровой центр" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Overlay" Tag="Overlay" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Widgets" Tag="Widgets" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Quick Menu" Tag="Quick Menu" Click="Navigation_Click" Margin="0,1"/>
                     <Button Content="  Инструменты" Tag="Инструменты" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Хранилище" Tag="Хранилище" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Автозагрузка" Tag="Автозагрузка" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Benchmark" Tag="Benchmark" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Системные оповещения" Tag="Оповещения" Click="Navigation_Click" Margin="0,1"/>
                     <Button Content="  История" Tag="История" Click="Navigation_Click" Margin="0,1"/>
 
                     <TextBlock Text="ПРИЛОЖЕНИЕ" Foreground="#686C75" FontSize="10" FontWeight="SemiBold" Margin="8,25,0,8"/>
@@ -90,7 +97,7 @@
                         <StackPanel>
                             <TextBlock Text="GPU" Foreground="#858891" FontSize="11"/>
                             <TextBlock x:Name="GpuUsageValue" Text="Недоступно" FontSize="22" FontWeight="SemiBold" Margin="0,9,0,2"/>
-                            <TextBlock Text="Температура: недоступно" Foreground="#777B85" FontSize="10"/>
+                            <TextBlock x:Name="GpuUsageDetail" Text="Температура: недоступно" Foreground="#777B85" FontSize="10"/>
                         </StackPanel>
                     </Border>
                     <Border Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,10,0">
@@ -204,10 +211,7 @@
             </Border>
 
             <Border x:Name="PlaceholderContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,0,0,0">
-                <StackPanel VerticalAlignment="Top">
-                    <TextBlock x:Name="PlaceholderTitle" Text="Раздел в разработке" FontSize="17" FontWeight="SemiBold"/>
-                    <TextBlock x:Name="PlaceholderDescription" Text="Этот раздел будет добавлен на следующем этапе разработки PCore." Foreground="#858891" FontSize="12" TextWrapping="Wrap" Margin="0,9,0,0"/>
-                </StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel x:Name="DynamicPageContent" VerticalAlignment="Top"><TextBlock x:Name="PlaceholderTitle" Text="Раздел PCore" FontSize="17" FontWeight="SemiBold"/><TextBlock x:Name="PlaceholderDescription" Text="Выберите раздел." Foreground="#858891" FontSize="12" TextWrapping="Wrap" Margin="0,9,0,0"/></StackPanel></ScrollViewer>
             </Border>
 
             <Border x:Name="HardwareContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24">
