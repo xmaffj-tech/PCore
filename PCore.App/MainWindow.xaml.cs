@@ -70,6 +70,7 @@ namespace PCore.App
             try
             {
                 SystemMonitorSnapshot snapshot = _systemMonitor.Read();
+                _alertService.Evaluate(snapshot, 90, TimeSpan.FromMinutes(5));
                 CpuPageValue.Text = snapshot.CpuUsage.HasValue ? snapshot.CpuUsage.Value.ToString("0") + "%" : "Недоступно";
                 RamPageValue.Text = snapshot.RamUsedGb.HasValue && snapshot.RamTotalGb.HasValue ? snapshot.RamUsedGb.Value.ToString("0.0") + " / " + snapshot.RamTotalGb.Value.ToString("0.0") + " ГБ" : "Недоступно";
                 RamPageDetail.Text = snapshot.RamUsagePercent.HasValue ? "Используется " + snapshot.RamUsagePercent.Value.ToString("0") + "%" : "Процент использования недоступен";
