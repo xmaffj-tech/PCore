@@ -82,29 +82,29 @@
                     <Border Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,10,0">
                         <StackPanel>
                             <TextBlock Text="CPU" Foreground="#858891" FontSize="11"/>
-                            <TextBlock Text="—" FontSize="27" FontWeight="SemiBold" Margin="0,9,0,2"/>
-                            <TextBlock Text="Ожидание датчика" Foreground="#777B85" FontSize="10"/>
+                            <TextBlock x:Name="CpuUsageValue" Text="Недоступно" FontSize="22" FontWeight="SemiBold" Margin="0,9,0,2"/>
+                            <TextBlock x:Name="CpuUsageDetail" Text="Подготовка счётчика" Foreground="#777B85" FontSize="10"/>
                         </StackPanel>
                     </Border>
                     <Border Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,10,0">
                         <StackPanel>
                             <TextBlock Text="GPU" Foreground="#858891" FontSize="11"/>
-                            <TextBlock Text="—" FontSize="27" FontWeight="SemiBold" Margin="0,9,0,2"/>
-                            <TextBlock Text="Ожидание датчика" Foreground="#777B85" FontSize="10"/>
+                            <TextBlock x:Name="GpuUsageValue" Text="Недоступно" FontSize="22" FontWeight="SemiBold" Margin="0,9,0,2"/>
+                            <TextBlock Text="Температура: недоступно" Foreground="#777B85" FontSize="10"/>
                         </StackPanel>
                     </Border>
                     <Border Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,10,0">
                         <StackPanel>
                             <TextBlock Text="RAM" Foreground="#858891" FontSize="11"/>
-                            <TextBlock Text="—" FontSize="27" FontWeight="SemiBold" Margin="0,9,0,2"/>
-                            <TextBlock Text="Ожидание данных" Foreground="#777B85" FontSize="10"/>
+                            <TextBlock x:Name="RamUsageValue" Text="Загрузка..." FontSize="22" FontWeight="SemiBold" Margin="0,9,0,2"/>
+                            <TextBlock x:Name="RamUsageDetail" Text="Получение данных Windows" Foreground="#777B85" FontSize="10"/>
                         </StackPanel>
                     </Border>
                     <Border Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="16">
                         <StackPanel>
                             <TextBlock Text="DISK" Foreground="#858891" FontSize="11"/>
-                            <TextBlock Text="—" FontSize="27" FontWeight="SemiBold" Margin="0,9,0,2"/>
-                            <TextBlock Text="Ожидание данных" Foreground="#777B85" FontSize="10"/>
+                            <TextBlock x:Name="DiskUsageValue" Text="Загрузка..." FontSize="22" FontWeight="SemiBold" Margin="0,9,0,2"/>
+                            <TextBlock x:Name="DiskUsageDetail" Text="Получение данных накопителей" Foreground="#777B85" FontSize="10"/>
                         </StackPanel>
                     </Border>
                 </UniformGrid>
@@ -112,7 +112,7 @@
                 <Border Grid.Row="1" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,14">
                     <StackPanel>
                         <TextBlock Text="Мониторинг системы" FontSize="15" FontWeight="SemiBold"/>
-                        <TextBlock Text="Здесь появятся графики загрузки, температуры и частот после подключения модуля мониторинга." Foreground="#858891" FontSize="12" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                        <TextBlock Text="Загрузка процессора, использование оперативной памяти и занятое место на дисках обновляются по данным Windows. Температуры и показатели видеокарты появятся после подключения аппаратных датчиков." Foreground="#858891" FontSize="12" TextWrapping="Wrap" Margin="0,8,0,0"/>
                         <Border Background="#24262D" Height="1" Margin="0,18,0,14"/>
                         <TextBlock Text="История показателей" Foreground="#B9BBC1" FontSize="12"/>
                         <TextBlock Text="Данные пока не записываются. PCore не показывает вымышленные значения." Foreground="#777B85" FontSize="11" Margin="0,6,0,0"/>
