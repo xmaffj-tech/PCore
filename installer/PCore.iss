@@ -32,3 +32,17 @@ Name: "desktopicon"; Description: "Создать ярлык на рабочем
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Запустить PCore"; Flags: postinstall nowait skipifsilent
+
+[Code]
+function InitializeSetup(): Boolean;
+var
+  ReleaseValue: Cardinal;
+begin
+  Result := True;
+  if (not RegQueryDWordValue(HKLM64, 'SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', ReleaseValue)) or
+     (ReleaseValue < 528040) then
+  begin
+    MsgBox('.NET Framework 4.8 is required. Install it before installing PCore.', mbError, MB_OK);
+    Result := False;
+  end;
+end;
