@@ -14,7 +14,7 @@ namespace PCore.App
 
     public sealed class GameCatalog
     {
-        private static readonly string[] GameHints = { "steam", "epic games", "ubisoft", "battle.net", "riot", "ea app", "rockstar", "minecraft", "war thunder", "valorant", "counter-strike", "fortnite", "roblox" };
+        private static readonly string[] GameHints = { "steam", "epic games", "ubisoft", "battle.net", "riot", "ea app", "rockstar", "minecraft", "war thunder", "valorant", "counter-strike", "fortnite" };
 
         public IList<GameEntry> FindInstalledGames()
         {
