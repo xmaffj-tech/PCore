@@ -159,6 +159,50 @@
                 </DockPanel>
             </Border>
 
+            <Border x:Name="CpuContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="Процессор" FontSize="17" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="CpuPageValue" Text="Ожидание измерения..." FontSize="30" FontWeight="SemiBold" Margin="0,14,0,4"/>
+                    <TextBlock Text="Общая загрузка процессора по системному счётчику Windows." Foreground="#858891"/>
+                </StackPanel>
+            </Border>
+            <Border x:Name="RamContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="Оперативная память" FontSize="17" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="RamPageValue" Text="Получение данных..." FontSize="28" FontWeight="SemiBold" Margin="0,14,0,4"/>
+                    <TextBlock x:Name="RamPageDetail" Text="Данные Windows" Foreground="#858891"/>
+                </StackPanel>
+            </Border>
+            <Border x:Name="DiskContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="Накопители" FontSize="17" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="DiskPageValue" Text="Получение данных..." FontSize="28" FontWeight="SemiBold" Margin="0,14,0,4"/>
+                    <TextBlock x:Name="DiskPageDetail" Text="Суммарная ёмкость готовых фиксированных дисков" Foreground="#858891"/>
+                </StackPanel>
+            </Border>
+            <Border x:Name="HistoryContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="История мониторинга" FontSize="17" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="HistorySummary" Text="История пока пуста." Foreground="#858891" Margin="0,12,0,12"/>
+                    <Button Content="Обновить историю" Width="150" HorizontalAlignment="Left" Click="RefreshHistory_Click"/>
+                    <TextBlock Text="История хранится локально в профиле Windows (AppData/Local/PCore/history.json)." Foreground="#777B85" TextWrapping="Wrap" Margin="0,16,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border x:Name="SettingsContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="Настройки PCore" FontSize="17" FontWeight="SemiBold"/>
+                    <TextBlock Text="Интервал обновления" Foreground="#858891" Margin="0,16,0,6"/>
+                    <ComboBox x:Name="RefreshIntervalBox" Width="180" HorizontalAlignment="Left" SelectedIndex="0">
+                        <ComboBoxItem Content="1 секунда"/>
+                        <ComboBoxItem Content="2 секунды"/>
+                        <ComboBoxItem Content="5 секунд"/>
+                    </ComboBox>
+                    <CheckBox x:Name="NotificationsCheck" Content="Уведомления системы" Margin="0,16,0,0" Foreground="#E8E8EA"/>
+                    <Button Content="Сохранить настройки" Width="180" HorizontalAlignment="Left" Margin="0,18,0,0" Click="SaveSettings_Click"/>
+                    <TextBlock x:Name="SettingsStatus" Foreground="#858891" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Border>
+
             <Border x:Name="PlaceholderContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,0,0,0">
                 <StackPanel VerticalAlignment="Top">
                     <TextBlock x:Name="PlaceholderTitle" Text="Раздел в разработке" FontSize="17" FontWeight="SemiBold"/>
