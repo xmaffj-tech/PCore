@@ -19,8 +19,11 @@ namespace PCore.App
         public MainWindow()
         {
             InitializeComponent();
+            _settings = _settingsStore.Load();
             _monitorTimer = new DispatcherTimer();
-            _monitorTimer.Interval = TimeSpan.FromSeconds(1);
+            _monitorTimer.Interval = TimeSpan.FromSeconds(Math.Max(1, _settings.RefreshSeconds));
+            RefreshIntervalBox.SelectedIndex = _settings.RefreshSeconds == 5 ? 2 : (_settings.RefreshSeconds == 2 ? 1 : 0);
+            NotificationsCheck.IsChecked = _settings.NotificationsEnabled;
             _monitorTimer.Tick += MonitorTimer_Tick;
             StartMonitoring();
         }
