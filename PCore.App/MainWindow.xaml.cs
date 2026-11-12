@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -9,11 +10,12 @@ namespace PCore.App
     {
         private readonly DispatcherTimer _monitorTimer;
         private SystemMonitor _systemMonitor;
+        private readonly NetworkMonitor _networkMonitor = new NetworkMonitor();
+        private readonly ProcessMonitor _processMonitor = new ProcessMonitor();
 
         public MainWindow()
         {
             InitializeComponent();
-
             _monitorTimer = new DispatcherTimer();
             _monitorTimer.Interval = TimeSpan.FromSeconds(1);
             _monitorTimer.Tick += MonitorTimer_Tick;
@@ -26,6 +28,7 @@ namespace PCore.App
             {
                 _systemMonitor = new SystemMonitor();
                 UpdateMonitoring();
+                UpdateNetwork();
                 _monitorTimer.Start();
             }
             catch (Exception)
@@ -42,52 +45,104 @@ namespace PCore.App
         private void MonitorTimer_Tick(object sender, EventArgs e)
         {
             UpdateMonitoring();
+            if (NetworkContent.Visibility == Visibility.Visible)
+                UpdateNetwork();
         }
 
         private void UpdateMonitoring()
         {
             if (_systemMonitor == null) return;
-
             try
             {
                 SystemMonitorSnapshot snapshot = _systemMonitor.Read();
-                CpuUsageValue.Text = snapshot.CpuUsage.HasValue
-                    ? snapshot.CpuUsage.Value.ToString("0") + "%"
-                    : "Ожидание...";
-                CpuUsageDetail.Text = snapshot.CpuUsage.HasValue
-                    ? "Текущая загрузка процессора"
-                    : "Сбор первого измерения";
-
+                CpuUsageValue.Text = snapshot.CpuUsage.HasValue ? snapshot.CpuUsage.Value.ToString("0", CultureInfo.InvariantCulture) + "%" : "Ожидание...";
+                CpuUsageDetail.Text = snapshot.CpuUsage.HasValue ? "Текущая загрузка процессора" : "Сбор первого измерения";
                 RamUsageValue.Text = snapshot.RamUsedGb.HasValue && snapshot.RamTotalGb.HasValue
-                    ? snapshot.RamUsedGb.Value.ToString("0.0") + " / " + snapshot.RamTotalGb.Value.ToString("0.0") + " ГБ"
-                    : "Недоступно";
-                RamUsageDetail.Text = snapshot.RamUsagePercent.HasValue
-                    ? "Используется " + snapshot.RamUsagePercent.Value.ToString("0") + "%"
-                    : "Данные памяти недоступны";
-
+                    ? snapshot.RamUsedGb.Value.ToString("0.0") + " / " + snapshot.RamTotalGb.Value.ToString("0.0") + " ГБ" : "Недоступно";
+                RamUsageDetail.Text = snapshot.RamUsagePercent.HasValue ? "Используется " + snapshot.RamUsagePercent.Value.ToString("0") + "%" : "Данные памяти недоступны";
                 DiskUsageValue.Text = snapshot.DiskUsedGb.HasValue && snapshot.DiskTotalGb.HasValue
-                    ? snapshot.DiskUsedGb.Value.ToString("0") + " / " + snapshot.DiskTotalGb.Value.ToString("0") + " ГБ"
-                    : "Недоступно";
-                DiskUsageDetail.Text = snapshot.DiskUsagePercent.HasValue
-                    ? "Занято " + snapshot.DiskUsagePercent.Value.ToString("0") + "% на готовых дисках"
-                    : "Нет доступных дисков";
+                    ? snapshot.DiskUsedGb.Value.ToString("0") + " / " + snapshot.DiskTotalGb.Value.ToString("0") + " ГБ" : "Недоступно";
+                DiskUsageDetail.Text = snapshot.DiskUsagePercent.HasValue ? "Занято " + snapshot.DiskUsagePercent.Value.ToString("0") + "% на готовых дисках" : "Нет доступных дисков";
             }
             catch (Exception)
             {
-                CpuUsageValue.Text = "Недоступно";
-                CpuUsageDetail.Text = "Ошибка чтения счётчика";
-                RamUsageValue.Text = "Недоступно";
-                RamUsageDetail.Text = "Ошибка чтения памяти";
-                DiskUsageValue.Text = "Недоступно";
-                DiskUsageDetail.Text = "Ошибка чтения дисков";
+                CpuUsageValue.Text = "Недоступно"; CpuUsageDetail.Text = "Ошибка чтения счётчика";
+                RamUsageValue.Text = "Недоступно"; RamUsageDetail.Text = "Ошибка чтения памяти";
+                DiskUsageValue.Text = "Недоступно"; DiskUsageDetail.Text = "Ошибка чтения дисков";
+            }
+        }
+
+        private void UpdateNetwork()
+        {
+            try
+            {
+                NetworkSnapshot snapshot = _networkMonitor.Read();
+                NetworkDownload.Text = snapshot.DownloadBytesPerSecond.HasValue ? FormatRate(snapshot.DownloadBytesPerSecond.Value) : "Сбор первого измерения";
+                NetworkUpload.Text = snapshot.UploadBytesPerSecond.HasValue ? FormatRate(snapshot.UploadBytesPerSecond.Value) : "Сбор первого измерения";
+                NetworkAdapters.Text = "Активные сетевые адаптеры: " + snapshot.ActiveAdapters;
+                NetworkTotals.Text = "Получено: " + FormatBytes(snapshot.TotalReceivedBytes) + "  |  Отправлено: " + FormatBytes(snapshot.TotalSentBytes);
+            }
+            catch (Exception)
+            {
+                NetworkDownload.Text = "Недоступно"; NetworkUpload.Text = "Недоступно";
+                NetworkAdapters.Text = "Не удалось прочитать сетевые адаптеры";
+            }
+        }
+
+        private static string FormatRate(double bytesPerSecond)
+        {
+            if (bytesPerSecond >= 1048576d) return (bytesPerSecond / 1048576d).ToString("0.00") + " МБ/с";
+            if (bytesPerSecond >= 1024d) return (bytesPerSecond / 1024d).ToString("0.0") + " КБ/с";
+            return bytesPerSecond.ToString("0") + " Б/с";
+        }
+
+        private static string FormatBytes(long bytes)
+        {
+            if (bytes >= 1073741824L) return (bytes / 1073741824d).ToString("0.00") + " ГБ";
+            if (bytes >= 1048576L) return (bytes / 1048576d).ToString("0.0") + " МБ";
+            return (bytes / 1024d).ToString("0") + " КБ";
+        }
+
+        private void LoadProcesses()
+        {
+            try
+            {
+                var rows = _processMonitor.Read();
+                ProcessesGrid.ItemsSource = rows;
+                ProcessCount.Text = "Найдено: " + rows.Count;
+            }
+            catch (Exception)
+            {
+                ProcessesGrid.ItemsSource = null;
+                ProcessCount.Text = "Не удалось получить список процессов";
+            }
+        }
+
+        private void RefreshProcesses_Click(object sender, RoutedEventArgs e) { LoadProcesses(); }
+        private void RefreshHardware_Click(object sender, RoutedEventArgs e) { LoadHardwareInformation(); }
+
+        private void LoadHardwareInformation()
+        {
+            HardwareCpu.Text = "Загрузка..."; HardwareGpu.Text = "Загрузка...";
+            HardwareRam.Text = "Загрузка..."; HardwareDisks.Text = "Загрузка..."; HardwareOs.Text = "Загрузка...";
+            try
+            {
+                HardwareInformation info = HardwareInformation.Read();
+                HardwareCpu.Text = info.Processor; HardwareGpu.Text = info.Graphics;
+                HardwareRam.Text = info.Memory; HardwareDisks.Text = info.Drives; HardwareOs.Text = info.OperatingSystem;
+            }
+            catch (Exception)
+            {
+                HardwareCpu.Text = "Недоступно"; HardwareGpu.Text = "Недоступно";
+                HardwareRam.Text = "Недоступно"; HardwareDisks.Text = "Недоступно";
+                HardwareOs.Text = "Не удалось получить сведения. Попробуйте обновить данные.";
             }
         }
 
         protected override void OnClosed(EventArgs e)
         {
             _monitorTimer.Stop();
-            if (_systemMonitor != null)
-                _systemMonitor.Dispose();
+            if (_systemMonitor != null) _systemMonitor.Dispose();
             base.OnClosed(e);
         }
 
@@ -95,7 +150,6 @@ namespace PCore.App
         {
             var button = sender as Button;
             if (button == null) return;
-
             string section = button.Tag as string;
             if (string.IsNullOrWhiteSpace(section)) return;
 
@@ -103,6 +157,8 @@ namespace PCore.App
             DashboardContent.Visibility = Visibility.Collapsed;
             PlaceholderContent.Visibility = Visibility.Collapsed;
             HardwareContent.Visibility = Visibility.Collapsed;
+            NetworkContent.Visibility = Visibility.Collapsed;
+            ProcessesContent.Visibility = Visibility.Collapsed;
 
             if (section == "Обзор")
             {
@@ -110,7 +166,6 @@ namespace PCore.App
                 DashboardContent.Visibility = Visibility.Visible;
                 return;
             }
-
             if (section == "Оборудование")
             {
                 PageSubtitle.Text = "Физические компоненты и сведения об операционной системе";
@@ -118,43 +173,25 @@ namespace PCore.App
                 LoadHardwareInformation();
                 return;
             }
+            if (section == "Сеть")
+            {
+                PageSubtitle.Text = "Текущая скорость и счётчики сетевого трафика";
+                NetworkContent.Visibility = Visibility.Visible;
+                UpdateNetwork();
+                return;
+            }
+            if (section == "Процессы")
+            {
+                PageSubtitle.Text = "Список процессов Windows и потребление памяти";
+                ProcessesContent.Visibility = Visibility.Visible;
+                LoadProcesses();
+                return;
+            }
 
             PageSubtitle.Text = "Раздел PCore";
             PlaceholderContent.Visibility = Visibility.Visible;
             PlaceholderTitle.Text = section;
             PlaceholderDescription.Text = "Этот раздел пока находится в разработке. Его функциональность будет добавлена поэтапно.";
-        }
-
-        private void RefreshHardware_Click(object sender, RoutedEventArgs e)
-        {
-            LoadHardwareInformation();
-        }
-
-        private void LoadHardwareInformation()
-        {
-            HardwareCpu.Text = "Загрузка...";
-            HardwareGpu.Text = "Загрузка...";
-            HardwareRam.Text = "Загрузка...";
-            HardwareDisks.Text = "Загрузка...";
-            HardwareOs.Text = "Загрузка...";
-
-            try
-            {
-                HardwareInformation info = HardwareInformation.Read();
-                HardwareCpu.Text = info.Processor;
-                HardwareGpu.Text = info.Graphics;
-                HardwareRam.Text = info.Memory;
-                HardwareDisks.Text = info.Drives;
-                HardwareOs.Text = info.OperatingSystem;
-            }
-            catch (Exception)
-            {
-                HardwareCpu.Text = "Недоступно";
-                HardwareGpu.Text = "Недоступно";
-                HardwareRam.Text = "Недоступно";
-                HardwareDisks.Text = "Недоступно";
-                HardwareOs.Text = "Не удалось получить сведения. Попробуйте обновить данные.";
-            }
         }
     }
 }
