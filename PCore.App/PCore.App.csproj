@@ -54,6 +54,7 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="HardwareInformation.cs" />
+    <Compile Include="SystemMonitor.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
