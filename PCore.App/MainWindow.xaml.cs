@@ -137,13 +137,19 @@ namespace PCore.App
         private void LoadHistory()
         {
             var entries = _historyStore.ReadLatest(20);
-            if (entries.Count == 0) { HistorySummary.Text = "История пока пуста."; return; }
+            if (entries.Count == 0)
+            {
+                HistorySummary.Text = "История пока пуста.";
+                return;
+            }
+
             var latest = entries[0];
-            HistorySummary.Text = "Записей: " + entries.Count + " из последних измерений.\
-Последнее измерение: " + latest.Timestamp.ToString("g") + "\
-CPU: " + (latest.CpuPercent.HasValue ? latest.CpuPercent.Value.ToString("0") + "%" : "Недоступно") + "\
-RAM: " + (latest.RamPercent.HasValue ? latest.RamPercent.Value.ToString("0") + "%" : "Недоступно") + "\
-Disk: " + (latest.DiskPercent.HasValue ? latest.DiskPercent.Value.ToString("0") + "%" : "Недоступно");
+            string nl = Environment.NewLine;
+            HistorySummary.Text = "Записей: " + entries.Count + " из последних измерений." + nl
+                + "Последнее измерение: " + latest.Timestamp.ToString("g") + nl
+                + "CPU: " + (latest.CpuPercent.HasValue ? latest.CpuPercent.Value.ToString("0") + "%" : "Недоступно") + nl
+                + "RAM: " + (latest.RamPercent.HasValue ? latest.RamPercent.Value.ToString("0") + "%" : "Недоступно") + nl
+                + "Disk: " + (latest.DiskPercent.HasValue ? latest.DiskPercent.Value.ToString("0") + "%" : "Недоступно");
         }
 
         private void SaveSettings_Click(object sender, RoutedEventArgs e)
