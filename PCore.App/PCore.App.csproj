@@ -51,7 +51,14 @@
     <Compile Include="NetworkMonitor.cs" />
     <Compile Include="ProcessMonitor.cs" />
     <Compile Include="HistoryStore.cs" />
-    <Compile Include="SettingsStore.cs" />\n    <Compile Include="GpuMonitor.cs" />\n    <Compile Include="StartupManager.cs" />\n    <Compile Include="StorageAnalyzer.cs" />\n    <Compile Include="BenchmarkService.cs" />\n    <Compile Include="SystemAlertService.cs" />\n    <Compile Include="GameCatalog.cs" />\n    <Compile Include="LicenseService.cs" />
+    <Compile Include="SettingsStore.cs" />
+    <Compile Include="GpuMonitor.cs" />
+    <Compile Include="StartupManager.cs" />
+    <Compile Include="StorageAnalyzer.cs" />
+    <Compile Include="BenchmarkService.cs" />
+    <Compile Include="SystemAlertService.cs" />
+    <Compile Include="GameCatalog.cs" />
+    <Compile Include="LicenseService.cs" />
     <Compile Include="MainWindow.xaml.cs"><DependentUpon>MainWindow.xaml</DependentUpon></Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
