@@ -77,7 +77,14 @@ namespace PCore.App
                 RamPageDetail.Text = snapshot.RamUsagePercent.HasValue ? "Используется " + snapshot.RamUsagePercent.Value.ToString("0") + "%" : "Процент использования недоступен";
                 DiskPageValue.Text = snapshot.DiskUsedGb.HasValue && snapshot.DiskTotalGb.HasValue ? snapshot.DiskUsedGb.Value.ToString("0.0") + " / " + snapshot.DiskTotalGb.Value.ToString("0.0") + " ГБ" : "Недоступно";
                 DiskPageDetail.Text = snapshot.DiskUsagePercent.HasValue ? "Занято " + snapshot.DiskUsagePercent.Value.ToString("0") + "%" : "Процент использования недоступен";
-                if (DateTime.Now - _lastHistoryWrite >= TimeSpan.FromSeconds(10))\n                {\n                    try { _historyStore.Add(new HistoryEntry { Timestamp = DateTime.Now, CpuPercent = snapshot.CpuUsage, RamPercent = snapshot.RamUsagePercent, DiskPercent = snapshot.DiskUsagePercent }); _lastHistoryWrite = DateTime.Now; }\n                    catch (Exception) { }\n                }\n                GpuSnapshot gpu = _gpuMonitor.Read();\n                GpuUsageValue.Text = gpu.UtilizationPercent.HasValue ? gpu.UtilizationPercent.Value.ToString("0") + "%" : "Недоступно";\n                GpuUsageDetail.Text = gpu.Status + " | Температура: недоступно";
+                if (DateTime.Now - _lastHistoryWrite >= TimeSpan.FromSeconds(10))
+                {
+                    try { _historyStore.Add(new HistoryEntry { Timestamp = DateTime.Now, CpuPercent = snapshot.CpuUsage, RamPercent = snapshot.RamUsagePercent, DiskPercent = snapshot.DiskUsagePercent }); _lastHistoryWrite = DateTime.Now; }
+                    catch (Exception) { }
+                }
+                GpuSnapshot gpu = _gpuMonitor.Read();
+                GpuUsageValue.Text = gpu.UtilizationPercent.HasValue ? gpu.UtilizationPercent.Value.ToString("0") + "%" : "Недоступно";
+                GpuUsageDetail.Text = gpu.Status + " | Температура: недоступно";
                 CpuUsageValue.Text = snapshot.CpuUsage.HasValue ? snapshot.CpuUsage.Value.ToString("0", CultureInfo.InvariantCulture) + "%" : "Ожидание...";
                 CpuUsageDetail.Text = snapshot.CpuUsage.HasValue ? "Текущая загрузка процессора" : "Сбор первого измерения";
                 RamUsageValue.Text = snapshot.RamUsedGb.HasValue && snapshot.RamTotalGb.HasValue
