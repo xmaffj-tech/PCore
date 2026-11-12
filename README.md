@@ -21,7 +21,7 @@ PCore is a Windows desktop control center built with C#, WPF and .NET Framework 
 
 GPU utilization is best-effort and depends on Windows GPU Engine performance counters. GPU temperature, clocks, fan speed and per-card sensor readings are not yet implemented; unavailable values must remain unavailable. LibreHardwareMonitor integration is still pending.
 
-History is still JSON, not SQLite. Historical graphs, full statistics and retention controls are pending.
+History now uses the Windows SQLite engine and imports legacy JSON history on first launch. It keeps the latest 5000 samples. Historical graphs and expanded statistics are pending.
 
 Overlay, desktop widgets and global Quick Menu hotkeys are not yet full implementations. The current compact panel is an ordinary always-on-top WPF window, not an in-game overlay.
 
