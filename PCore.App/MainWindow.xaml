@@ -1,0 +1,137 @@
+<Window x:Class="PCore.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PCore" Height="760" Width="1180" MinHeight="650" MinWidth="980"
+        WindowStartupLocation="CenterScreen" Background="{StaticResource AppBackground}"
+        Foreground="#E8E8EA" FontFamily="Segoe UI">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="226"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="#15161A" BorderBrush="#292C33" BorderThickness="0,0,1,0">
+            <DockPanel Margin="16,20,16,16">
+                <StackPanel DockPanel.Dock="Top">
+                    <StackPanel Orientation="Horizontal" Margin="7,0,0,30">
+                        <Border Width="34" Height="34" CornerRadius="10" Background="#E8E8EA" VerticalAlignment="Center">
+                            <TextBlock Text="P" Foreground="#111216" FontSize="21" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Margin="11,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="PCore" FontSize="19" FontWeight="SemiBold"/>
+                            <TextBlock Text="PC CONTROL CENTER" FontSize="9" Foreground="#777B85" Margin="1,1,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <TextBlock Text="ОСНОВНОЕ" Foreground="#686C75" FontSize="10" FontWeight="SemiBold" Margin="8,0,0,8"/>
+                    <Button Content="  Обзор" Tag="Обзор" Click="Navigation_Click" Background="#252830" Margin="0,1"/>
+                    <Button Content="  Процессор" Tag="Процессор" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Видеокарта" Tag="Видеокарта" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Оперативная память" Tag="Оперативная память" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Диски" Tag="Диски" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Сеть" Tag="Сеть" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Процессы" Tag="Процессы" Click="Navigation_Click" Margin="0,1"/>
+
+                    <TextBlock Text="ИНСТРУМЕНТЫ" Foreground="#686C75" FontSize="10" FontWeight="SemiBold" Margin="8,25,0,8"/>
+                    <Button Content="  Игровой центр" Tag="Игровой центр" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Инструменты" Tag="Инструменты" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  История" Tag="История" Click="Navigation_Click" Margin="0,1"/>
+
+                    <TextBlock Text="ПРИЛОЖЕНИЕ" Foreground="#686C75" FontSize="10" FontWeight="SemiBold" Margin="8,25,0,8"/>
+                    <Button Content="  Настройки" Tag="Настройки" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  О программе" Tag="О программе" Click="Navigation_Click" Margin="0,1"/>
+                </StackPanel>
+
+                <Border DockPanel.Dock="Bottom" Background="#1D1F25" CornerRadius="10" Padding="12" Margin="0,16,0,0">
+                    <StackPanel>
+                        <TextBlock Text="PCore 0.1.0" FontWeight="SemiBold" FontSize="12"/>
+                        <TextBlock Text="Начальная версия" Foreground="#858891" FontSize="11" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Column="1" Margin="30,25,30,25">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="0,0,0,28">
+                <StackPanel>
+                    <TextBlock x:Name="PageTitle" Text="Обзор" FontSize="27" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="PageSubtitle" Text="Состояние и основные показатели компьютера" Foreground="#858891" FontSize="12" Margin="0,5,0,0"/>
+                </StackPanel>
+                <Border HorizontalAlignment="Right" VerticalAlignment="Center" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="8" Padding="12,8">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="7" Height="7" Fill="#D9B56D" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="Датчики ещё не подключены" FontSize="11" Foreground="#B9BBC1"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="1" x:Name="DashboardContent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <UniformGrid Grid.Row="0" Columns="4" Margin="0,0,0,14">
+                    <Border Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,10,0">
+                        <StackPanel>
+                            <TextBlock Text="CPU" Foreground="#858891" FontSize="11"/>
+                            <TextBlock Text="—" FontSize="27" FontWeight="SemiBold" Margin="0,9,0,2"/>
+                            <TextBlock Text="Ожидание датчика" Foreground="#777B85" FontSize="10"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,10,0">
+                        <StackPanel>
+                            <TextBlock Text="GPU" Foreground="#858891" FontSize="11"/>
+                            <TextBlock Text="—" FontSize="27" FontWeight="SemiBold" Margin="0,9,0,2"/>
+                            <TextBlock Text="Ожидание датчика" Foreground="#777B85" FontSize="10"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,10,0">
+                        <StackPanel>
+                            <TextBlock Text="RAM" Foreground="#858891" FontSize="11"/>
+                            <TextBlock Text="—" FontSize="27" FontWeight="SemiBold" Margin="0,9,0,2"/>
+                            <TextBlock Text="Ожидание данных" Foreground="#777B85" FontSize="10"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="DISK" Foreground="#858891" FontSize="11"/>
+                            <TextBlock Text="—" FontSize="27" FontWeight="SemiBold" Margin="0,9,0,2"/>
+                            <TextBlock Text="Ожидание данных" Foreground="#777B85" FontSize="10"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <Border Grid.Row="1" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="Мониторинг системы" FontSize="15" FontWeight="SemiBold"/>
+                        <TextBlock Text="Здесь появятся графики загрузки, температуры и частот после подключения модуля мониторинга." Foreground="#858891" FontSize="12" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                        <Border Background="#24262D" Height="1" Margin="0,18,0,14"/>
+                        <TextBlock Text="История показателей" Foreground="#B9BBC1" FontSize="12"/>
+                        <TextBlock Text="Данные пока не записываются. PCore не показывает вымышленные значения." Foreground="#777B85" FontSize="11" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="2" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Следующий этап" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="Подключение реальных данных CPU, GPU, RAM и накопителей через системные счётчики и LibreHardwareMonitor." Foreground="#858891" FontSize="12" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border x:Name="PlaceholderContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,0,0,0">
+                <StackPanel VerticalAlignment="Top">
+                    <TextBlock x:Name="PlaceholderTitle" Text="Раздел в разработке" FontSize="17" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="PlaceholderDescription" Text="Этот раздел будет добавлен на следующем этапе разработки PCore." Foreground="#858891" FontSize="12" TextWrapping="Wrap" Margin="0,9,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
