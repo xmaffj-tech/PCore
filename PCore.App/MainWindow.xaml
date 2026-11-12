@@ -31,6 +31,7 @@
                     <Button Content="  Диски" Tag="Диски" Click="Navigation_Click" Margin="0,1"/>
                     <Button Content="  Сеть" Tag="Сеть" Click="Navigation_Click" Margin="0,1"/>
                     <Button Content="  Процессы" Tag="Процессы" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Оборудование" Tag="Оборудование" Click="Navigation_Click" Margin="0,1"/>
 
                     <TextBlock Text="ИНСТРУМЕНТЫ" Foreground="#686C75" FontSize="10" FontWeight="SemiBold" Margin="8,25,0,8"/>
                     <Button Content="  Игровой центр" Tag="Игровой центр" Click="Navigation_Click" Margin="0,1"/>
@@ -131,6 +132,26 @@
                     <TextBlock x:Name="PlaceholderTitle" Text="Раздел в разработке" FontSize="17" FontWeight="SemiBold"/>
                     <TextBlock x:Name="PlaceholderDescription" Text="Этот раздел будет добавлен на следующем этапе разработки PCore." Foreground="#858891" FontSize="12" TextWrapping="Wrap" Margin="0,9,0,0"/>
                 </StackPanel>
+            </Border>
+
+            <Border x:Name="HardwareContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Сведения об оборудовании" FontSize="17" FontWeight="SemiBold"/>
+                        <TextBlock Text="Информация получена из Windows Management Instrumentation (WMI)." Foreground="#858891" FontSize="11" Margin="0,5,0,18"/>
+                        <TextBlock Text="ПРОЦЕССОР" Foreground="#858891" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="HardwareCpu" Text="Загрузка..." FontSize="13" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <TextBlock Text="ВИДЕОКАРТА" Foreground="#858891" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="HardwareGpu" Text="Загрузка..." FontSize="13" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <TextBlock Text="ОПЕРАТИВНАЯ ПАМЯТЬ" Foreground="#858891" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="HardwareRam" Text="Загрузка..." FontSize="13" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <TextBlock Text="НАКОПИТЕЛИ" Foreground="#858891" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="HardwareDisks" Text="Загрузка..." FontSize="13" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <TextBlock Text="ОПЕРАЦИОННАЯ СИСТЕМА" Foreground="#858891" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="HardwareOs" Text="Загрузка..." FontSize="13" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <Button Content="Обновить сведения" Width="170" HorizontalAlignment="Left" Click="RefreshHardware_Click"/>
+                    </StackPanel>
+                </ScrollViewer>
             </Border>
         </Grid>
     </Grid>
