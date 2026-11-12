@@ -6,9 +6,15 @@
 
 ## Current status
 
-PCore is at the initial foundation stage. The repository currently contains a WPF desktop application shell with a dark interface, working section navigation, and a Hardware page that reads system information through Windows WMI.
+PCore is in active development. The repository currently contains a WPF desktop application shell with a dark interface, section navigation, and a Hardware page that reads system information through Windows Management Instrumentation (WMI).
 
-Hardware values are intentionally shown as unavailable until real data providers are connected. PCore will not display fabricated monitoring values.
+The Dashboard now reads:
+- CPU load through the Windows `Processor / % Processor Time / _Total` performance counter.
+- Used and total physical memory through Windows performance counters and WMI.
+- Used and total capacity across ready fixed drives.
+- Values refresh once per second while the application is open.
+
+The first CPU sample is intentionally treated as a warm-up sample. GPU load, temperatures, fan speeds, and clock frequencies are not shown until a supported hardware sensor provider is connected. Unavailable data is never replaced with fabricated values.
 
 ## Technology
 
@@ -16,6 +22,7 @@ Hardware values are intentionally shown as unavailable until real data providers
 - WPF
 - .NET Framework 4.8
 - Visual Studio 2022
+- Windows Performance Counters and WMI for current system readings
 - Planned: LibreHardwareMonitor for supported hardware sensors
 - Planned: SQLite for local monitoring history
 
@@ -30,23 +37,33 @@ Hardware values are intentionally shown as unavailable until real data providers
 1. Clone or download this repository.
 2. Open `PCore.sln` in Visual Studio 2022.
 3. Restore any prompted components or install the .NET Framework 4.8 Developer Pack if needed.
-4. Select **Debug** and **Any CPU**.
+4. Select **Release** or **Debug** and **Any CPU**.
 5. Build the solution and run the PCore project.
+
+GitHub Actions is configured to build the solution on pushes and pull requests. A successful cloud build must be confirmed in the Actions tab before a release is considered verified.
 
 ## Planned modules
 
-- Dashboard
-- CPU, GPU, RAM, disk, and network monitoring
-- Process information
-- Hardware information from Windows WMI (processor, graphics adapters, installed RAM, physical disks, OS version)
+- Dashboard with live system readings
+- CPU and GPU details, temperatures, clocks, and sensor support
+- RAM, disk, and network monitoring
+- Process information and process management
+- Hardware information from Windows WMI
 - Gaming Center and PCore Overlay
-- Tools and benchmark
-- Monitoring history
-- Settings and customization
+- PCore Widgets and Quick Menu
+- Tools, benchmark, and system alerts
+- Local monitoring history with SQLite
+- Settings, themes, colors, and language customization
+- PRO and MAX optional subscription features
+- Windows installer and update mechanism
 
-## Project principle
+## Project principles
 
-Core monitoring features should remain free. Optional PRO and MAX plans may add extended analytics, longer history, reports, and customization.
+- Core monitoring features should remain free.
+- Optional PRO and MAX plans may add extended analytics, longer history, reports, and customization.
+- Store monitoring history locally unless the user explicitly chooses otherwise.
+- Never display fabricated hardware readings.
+- Keep the interface responsive and handle unavailable sensors safely.
 
 ---
 
