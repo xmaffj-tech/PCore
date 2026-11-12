@@ -102,7 +102,7 @@ namespace PCore.App
                 BindNullableDouble(statement, 3, entry.RamPercent);
                 BindNullableDouble(statement, 4, entry.DiskPercent);
                 int code = sqlite3_step(statement);
-                if (code != SqliteDone) throw new InvalidOperationException("SQLite insert failed: " + code);
+                if (code != SqliteDone) throw new InvalidOperationException("SQLite insert failed: " + code);\n                Execute(db, "DELETE FROM samples WHERE id NOT IN (SELECT id FROM samples ORDER BY timestamp_ticks DESC LIMIT 5000);");
             }
             finally { sqlite3_finalize(statement); }
         }
