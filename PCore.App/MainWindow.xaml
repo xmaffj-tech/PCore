@@ -127,6 +127,38 @@
                 </Border>
             </Grid>
 
+            <Border x:Name="NetworkContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="Сетевые показатели" FontSize="17" FontWeight="SemiBold"/>
+                    <UniformGrid Columns="2" Margin="0,18,0,12">
+                        <StackPanel><TextBlock Text="Загрузка" Foreground="#858891"/><TextBlock x:Name="NetworkDownload" Text="Ожидание измерения..." FontSize="22" FontWeight="SemiBold" Margin="0,6,0,0"/></StackPanel>
+                        <StackPanel><TextBlock Text="Отдача" Foreground="#858891"/><TextBlock x:Name="NetworkUpload" Text="Ожидание измерения..." FontSize="22" FontWeight="SemiBold" Margin="0,6,0,0"/></StackPanel>
+                    </UniformGrid>
+                    <TextBlock x:Name="NetworkAdapters" Text="Активные сетевые адаптеры: —" Foreground="#858891" Margin="0,8,0,0"/>
+                    <TextBlock x:Name="NetworkTotals" Text="Сеансовый счётчик трафика: —" Foreground="#858891" Margin="0,5,0,0"/>
+                    <TextBlock Text="Скорость рассчитывается по изменению счётчиков Windows между измерениями. Первый замер используется для калибровки." Foreground="#777B85" TextWrapping="Wrap" Margin="0,18,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="ProcessesContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="18">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,14">
+                        <TextBlock Text="Запущенные процессы" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <Button Content="Обновить" Click="RefreshProcesses_Click" Margin="16,0,0,0" Padding="14,7"/>
+                        <TextBlock x:Name="ProcessCount" Text="" Foreground="#858891" VerticalAlignment="Center" Margin="12,0,0,0"/>
+                    </StackPanel>
+                    <DataGrid x:Name="ProcessesGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Background="#191B20" Foreground="#E8E8EA" BorderBrush="#292C33" GridLinesVisibility="Horizontal" HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Процесс" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="PID" Binding="{Binding Id}" Width="75"/>
+                            <DataGridTextColumn Header="Память (МБ)" Binding="{Binding MemoryMb, StringFormat=N1}" Width="115"/>
+                            <DataGridTextColumn Header="CPU time" Binding="{Binding CpuTime}" Width="105"/>
+                            <DataGridTextColumn Header="Окно" Binding="{Binding WindowTitle}" Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+
             <Border x:Name="PlaceholderContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,0,0,0">
                 <StackPanel VerticalAlignment="Top">
                     <TextBlock x:Name="PlaceholderTitle" Text="Раздел в разработке" FontSize="17" FontWeight="SemiBold"/>
