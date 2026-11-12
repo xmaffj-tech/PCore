@@ -20,3 +20,22 @@ jobs:
 
       - name: Build PCore
         run: msbuild PCore.sln /m /p:Configuration=Release /p:Platform="Any CPU" /verbosity:minimal
+
+      - name: Build Windows installer
+        shell: pwsh
+        run: |
+          choco install innosetup --yes --no-progress
+          $iscc = Join-Path $env:ProgramFiles(x86) "Inno Setup 6\ISCC.exe"
+          if (!(Test-Path $iscc)) { throw "Inno Setup compiler not found" }
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          & $iscc installer/PCore.iss
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with exit code $LASTEXITCODE" }
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PCore-Windows-x64
+          path: |
+            PCore.App/bin/Release/PCore.exe
+            artifacts/PCore-Setup-x64.exe
+          if-no-files-found: error
