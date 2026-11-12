@@ -12,7 +12,7 @@
 
         <Border Grid.Column="0" Background="#15161A" BorderBrush="#292C33" BorderThickness="0,0,1,0">
             <DockPanel Margin="16,20,16,16">
-                <StackPanel DockPanel.Dock="Top">
+                <ScrollViewer DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto"><StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="7,0,0,30">
                         <Border Width="34" Height="34" CornerRadius="10" Background="#E8E8EA" VerticalAlignment="Center">
                             <TextBlock Text="P" Foreground="#111216" FontSize="21" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -48,7 +48,7 @@
                     <TextBlock Text="ПРИЛОЖЕНИЕ" Foreground="#686C75" FontSize="10" FontWeight="SemiBold" Margin="8,25,0,8"/>
                     <Button Content="  Настройки" Tag="Настройки" Click="Navigation_Click" Margin="0,1"/>
                     <Button Content="  О программе" Tag="О программе" Click="Navigation_Click" Margin="0,1"/>
-                </StackPanel>
+                </StackPanel></ScrollViewer>
 
                 <Border DockPanel.Dock="Bottom" Background="#1D1F25" CornerRadius="10" Padding="12" Margin="0,16,0,0">
                     <StackPanel>
@@ -192,7 +192,7 @@
                     <TextBlock Text="История мониторинга" FontSize="17" FontWeight="SemiBold"/>
                     <TextBlock x:Name="HistorySummary" Text="История пока пуста." Foreground="#858891" Margin="0,12,0,8"/>
                     <TextBlock x:Name="HistoryStatistics" Text="" Foreground="#858891" Margin="0,0,0,10"/>
-                    <Canvas x:Name="HistoryChart" Height="180" Background="#15161A" ClipToBounds="True" Margin="0,0,0,12"/>
+                    <Canvas x:Name="HistoryChart" Width="700" Height="180" Background="#15161A" ClipToBounds="True" Margin="0,0,0,12"/>
                     <Button Content="Обновить историю" Width="150" HorizontalAlignment="Left" Click="RefreshHistory_Click"/>
                     <TextBlock Text="История хранится локально в профиле Windows (AppData/Local/PCore/history.db)." Foreground="#777B85" TextWrapping="Wrap" Margin="0,16,0,0"/>
                 </StackPanel>
