@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace PCore.App
 {
@@ -154,20 +155,59 @@ namespace PCore.App
 
         private void LoadHistory()
         {
-            var entries = _historyStore.ReadLatest(20);
+            var entries = _historyStore.ReadLatest(60);
+            HistoryChart.Children.Clear();
             if (entries.Count == 0)
             {
                 HistorySummary.Text = "История пока пуста.";
+                HistoryStatistics.Text = "";
                 return;
             }
 
-            var latest = entries[0];
-            string nl = Environment.NewLine;
-            HistorySummary.Text = "Записей: " + entries.Count + " из последних измерений." + nl
-                + "Последнее измерение: " + latest.Timestamp.ToString("g") + nl
-                + "CPU: " + (latest.CpuPercent.HasValue ? latest.CpuPercent.Value.ToString("0") + "%" : "Недоступно") + nl
-                + "RAM: " + (latest.RamPercent.HasValue ? latest.RamPercent.Value.ToString("0") + "%" : "Недоступно") + nl
-                + "Disk: " + (latest.DiskPercent.HasValue ? latest.DiskPercent.Value.ToString("0") + "%" : "Недоступно");
+            var chronological = new System.Collections.Generic.List<HistoryEntry>(entries);
+            chronological.Reverse();
+            HistorySummary.Text = "Показано точек: " + chronological.Count + " | Последнее измерение: " + entries[0].Timestamp.ToString("g");
+            HistoryStatistics.Text = "CPU: " + FormatHistoryStats(chronological, 0) +
+                "    RAM: " + FormatHistoryStats(chronological, 1) +
+                "    Диск: " + FormatHistoryStats(chronological, 2);
+
+            DrawHistoryLine(chronological, 0, Brushes.White);
+            DrawHistoryLine(chronological, 1, Brushes.LightGray);
+            DrawHistoryLine(chronological, 2, Brushes.Gray);
+        }
+
+        private static string FormatHistoryStats(System.Collections.Generic.IList<HistoryEntry> entries, int series)
+        {
+            double total = 0, min = double.MaxValue, max = double.MinValue;
+            int count = 0;
+            foreach (HistoryEntry entry in entries)
+            {
+                double? value = series == 0 ? entry.CpuPercent : (series == 1 ? entry.RamPercent : entry.DiskPercent);
+                if (!value.HasValue) continue;
+                total += value.Value;
+                min = Math.Min(min, value.Value);
+                max = Math.Max(max, value.Value);
+                count++;
+            }
+            if (count == 0) return "недоступно";
+            return "ср. " + (total / count).ToString("0") + "% (мин. " + min.ToString("0") + ", макс. " + max.ToString("0") + "%)";
+        }
+
+        private void DrawHistoryLine(System.Collections.Generic.IList<HistoryEntry> entries, int series, Brush brush)
+        {
+            var points = new PointCollection();
+            int valid = 0;
+            for (int i = 0; i < entries.Count; i++)
+            {
+                double? value = series == 0 ? entries[i].CpuPercent : (series == 1 ? entries[i].RamPercent : entries[i].DiskPercent);
+                if (!value.HasValue) continue;
+                double x = entries.Count <= 1 ? 0 : (HistoryChart.ActualWidth > 0 ? HistoryChart.ActualWidth : 700) * i / (entries.Count - 1);
+                double y = 160 - Math.Max(0, Math.Min(100, value.Value)) * 1.5;
+                points.Add(new Point(x, y));
+                valid++;
+            }
+            if (valid < 2) return;
+            HistoryChart.Children.Add(new Polyline { Points = points, Stroke = brush, StrokeThickness = 2, SnapsToDevicePixels = true });
         }
 
         private void SaveSettings_Click(object sender, RoutedEventArgs e)
