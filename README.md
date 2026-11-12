@@ -52,8 +52,8 @@ GitHub Actions is configured to build the solution on pushes and pull requests. 
 - Gaming Center and PCore Overlay
 - PCore Widgets and Quick Menu
 - Tools, benchmark, and system alerts
-- Local monitoring history with SQLite
-- Settings, themes, colors, and language customization
+- Local monitoring history in a JSON file (SQLite migration remains planned)
+- Initial settings for refresh interval and notification preference; themes, colors, and language customization remain planned
 - PRO and MAX optional subscription features
 - Windows installer and update mechanism
 
