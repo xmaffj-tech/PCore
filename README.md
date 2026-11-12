@@ -13,7 +13,7 @@ PCore is a Windows desktop control center built with C#, WPF and .NET Framework 
 - Gaming Center: best-effort discovery of registered games and launchers from uninstall registry entries.
 - Benchmark: short CPU arithmetic diagnostic. It is not a standardized benchmark score.
 - System Alerts: in-app alerts when CPU or RAM usage reaches 90%, with a five-minute cooldown.
-- History: local JSON history in %LOCALAPPDATA%\PCore\history.json, sampled every ten seconds.
+- History: local SQLite history in %LOCALAPPDATA%\PCore\history.db, sampled every ten seconds. Existing JSON history is imported on first launch.
 - Settings: refresh interval and notification preference in local JSON.
 - License status: Free mode only until a secure server-side license service and payment provider are configured.
 
