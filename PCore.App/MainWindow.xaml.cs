@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using System.Windows.Media;
 
 namespace PCore.App
 {
@@ -15,6 +16,14 @@ namespace PCore.App
         private readonly HistoryStore _historyStore = new HistoryStore();
         private readonly SettingsStore _settingsStore = new SettingsStore();
         private UserSettings _settings;
+        private readonly GpuMonitor _gpuMonitor = new GpuMonitor();
+        private readonly StorageAnalyzer _storageAnalyzer = new StorageAnalyzer();
+        private readonly StartupManager _startupManager = new StartupManager();
+        private readonly GameCatalog _gameCatalog = new GameCatalog();
+        private readonly BenchmarkService _benchmarkService = new BenchmarkService();
+        private readonly SystemAlertService _alertService = new SystemAlertService();
+        private readonly LicenseService _licenseService = new LicenseService();
+        private DateTime _lastHistoryWrite = DateTime.MinValue;
 
         public MainWindow()
         {
@@ -66,7 +75,7 @@ namespace PCore.App
                 RamPageDetail.Text = snapshot.RamUsagePercent.HasValue ? "Используется " + snapshot.RamUsagePercent.Value.ToString("0") + "%" : "Процент использования недоступен";
                 DiskPageValue.Text = snapshot.DiskUsedGb.HasValue && snapshot.DiskTotalGb.HasValue ? snapshot.DiskUsedGb.Value.ToString("0.0") + " / " + snapshot.DiskTotalGb.Value.ToString("0.0") + " ГБ" : "Недоступно";
                 DiskPageDetail.Text = snapshot.DiskUsagePercent.HasValue ? "Занято " + snapshot.DiskUsagePercent.Value.ToString("0") + "%" : "Процент использования недоступен";
-                _historyStore.Add(new HistoryEntry { Timestamp = DateTime.Now, CpuPercent = snapshot.CpuUsage, RamPercent = snapshot.RamUsagePercent, DiskPercent = snapshot.DiskUsagePercent });
+                if (DateTime.Now - _lastHistoryWrite >= TimeSpan.FromSeconds(10))\n                {\n                    try { _historyStore.Add(new HistoryEntry { Timestamp = DateTime.Now, CpuPercent = snapshot.CpuUsage, RamPercent = snapshot.RamUsagePercent, DiskPercent = snapshot.DiskUsagePercent }); _lastHistoryWrite = DateTime.Now; }\n                    catch (Exception) { }\n                }\n                GpuSnapshot gpu = _gpuMonitor.Read();\n                GpuUsageValue.Text = gpu.UtilizationPercent.HasValue ? gpu.UtilizationPercent.Value.ToString("0") + "%" : "Недоступно";\n                GpuUsageDetail.Text = gpu.Status + " | Температура: недоступно";
                 CpuUsageValue.Text = snapshot.CpuUsage.HasValue ? snapshot.CpuUsage.Value.ToString("0", CultureInfo.InvariantCulture) + "%" : "Ожидание...";
                 CpuUsageDetail.Text = snapshot.CpuUsage.HasValue ? "Текущая загрузка процессора" : "Сбор первого измерения";
                 RamUsageValue.Text = snapshot.RamUsedGb.HasValue && snapshot.RamTotalGb.HasValue
@@ -186,6 +195,115 @@ namespace PCore.App
             _monitorTimer.Stop();
             if (_systemMonitor != null) _systemMonitor.Dispose();
             base.OnClosed(e);
+        }
+
+
+        private TextBlock AddText(string text, double size, bool bold)
+        {
+            var block = new TextBlock { Text = text, FontSize = size, FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E8E8EA")),
+                TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 5, 0, 5) };
+            DynamicPageContent.Children.Add(block);
+            return block;
+        }
+
+        private Button AddAction(string text, RoutedEventHandler action)
+        {
+            var button = new Button { Content = text, Width = 220, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 8, 0, 8) };
+            button.Click += action;
+            DynamicPageContent.Children.Add(button);
+            return button;
+        }
+
+        private void BuildDynamicPage(string section)
+        {
+            DynamicPageContent.Children.Clear();
+            AddText(section, 19, true);
+            if (section == "Хранилище")
+            {
+                foreach (StorageDrive drive in _storageAnalyzer.ReadDrives())
+                    AddText(drive.Name + "  " + drive.Label + "  " + drive.Format + Environment.NewLine +
+                        "Занято: " + drive.UsedGb.ToString("0.0") + " ГБ из " + drive.TotalGb.ToString("0.0") +
+                        " ГБ (" + drive.UsedPercent.ToString("0") + "%), свободно: " + drive.FreeGb.ToString("0.0") + " ГБ", 13, false);
+                AddText("Показаны готовые тома Windows. Удаление файлов не выполняется.", 11, false);
+                return;
+            }
+            if (section == "Автозагрузка")
+            {
+                AddText("Элементы автозапуска из реестра Windows и папок Startup. Просмотр безопасен: PCore пока ничего не отключает.", 12, false);
+                foreach (StartupEntry item in _startupManager.ReadEntries())
+                    AddText(item.Name + " — " + item.Location + Environment.NewLine + item.Command, 12, false);
+                return;
+            }
+            if (section == "Игровой центр")
+            {
+                AddText("Обнаружение игр и игровых платформ по зарегистрированным установкам Windows.", 12, false);
+                IList<GameEntry> games = _gameCatalog.FindInstalledGames();
+                if (games.Count == 0) AddText("Подходящие записи об играх не найдены. Портативные игры могут не отображаться.", 12, false);
+                foreach (GameEntry game in games) AddText(game.Name + (string.IsNullOrWhiteSpace(game.Publisher) ? "" : " — " + game.Publisher) +
+                    (string.IsNullOrWhiteSpace(game.InstallLocation) ? "" : Environment.NewLine + game.InstallLocation), 12, false);
+                return;
+            }
+            if (section == "Benchmark")
+            {
+                AddText("Лёгкий CPU-тест на 5 секунд. Это диагностическая нагрузка, не универсальный рейтинг производительности.", 12, false);
+                AddAction("Запустить CPU Benchmark", RunBenchmark_Click);
+                return;
+            }
+            if (section == "Оповещения")
+            {
+                AddText("PCore отслеживает высокую загрузку CPU и RAM во время работы приложения. Порог: 90%, повтор не чаще 5 минут.", 12, false);
+                _alertService.AlertRaised -= AlertService_AlertRaised;
+                _alertService.AlertRaised += AlertService_AlertRaised;
+                AddText("Служба оповещений подключена к циклу мониторинга.", 12, false);
+                return;
+            }
+            if (section == "Инструменты")
+            {
+                AddText("NetSpeed: текущая скорость сети доступна в разделе «Сеть». Storage: обзор дисков доступен в разделе «Хранилище».", 12, false);
+                AddText("Window Inspector и расширенные очистка/оптимизация пока не выполняют действий с системой.", 12, false);
+                return;
+            }
+            if (section == "Overlay" || section == "Widgets" || section == "Quick Menu")
+            {
+                AddText("Компонент подготовлен как отдельный модуль интерфейса, но постоянное игровое Overlay, глобальные горячие клавиши и виджеты рабочего стола требуют отдельной реализации и тестирования на Windows.", 12, false);
+                AddAction("Открыть компактную панель PCore", OpenMiniPanel_Click);
+                return;
+            }
+            if (section == "О программе")
+            {
+                AddText("PCore 0.2 development build", 14, true);
+                AddText("Лицензия: " + _licenseService.Status, 12, false);
+                AddText("PRO — $1.99/мес. MAX — $4.99/мес. Покупка и активация пока отключены до подключения безопасной серверной проверки лицензий и платёжного провайдера.", 12, false);
+                return;
+            }
+            AddText("Раздел создан. Дополнительные функции будут подключаться после проверки совместимости.", 12, false);
+        }
+
+        private void RunBenchmark_Click(object sender, RoutedEventArgs e)
+        {
+            AddText("Выполняется тест CPU (до 5 секунд)...", 12, false);
+            BenchmarkResult result = _benchmarkService.RunCpuTest(5);
+            AddText("Результат: " + result.Operations.ToString("N0") + " операций за " + result.Duration.TotalSeconds.ToString("0.00") + " с. " + result.Note, 13, true);
+        }
+
+        private void AlertService_AlertRaised(object sender, SystemAlertEventArgs e)
+        {
+            if (_settings.NotificationsEnabled)
+                MessageBox.Show(e.Message, e.Title, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void OpenMiniPanel_Click(object sender, RoutedEventArgs e)
+        {
+            var panel = new Window { Title = "PCore Mini", Width = 330, Height = 190, WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this, Topmost = true, ResizeMode = ResizeMode.NoResize, Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#15161A")) };
+            var stack = new StackPanel { Margin = new Thickness(18) };
+            stack.Children.Add(new TextBlock { Text = "PCore", FontSize = 18, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White });
+            stack.Children.Add(new TextBlock { Text = "CPU: " + CpuUsageValue.Text + "   GPU: " + GpuUsageValue.Text, Margin = new Thickness(0, 12, 0, 5), Foreground = Brushes.White });
+            stack.Children.Add(new TextBlock { Text = "RAM: " + RamUsageValue.Text, Foreground = Brushes.White });
+            stack.Children.Add(new TextBlock { Text = "Это компактное окно, не игровой overlay.", Margin = new Thickness(0, 12, 0, 0), Foreground = Brushes.Gray, FontSize = 10 });
+            panel.Content = stack;
+            panel.Show();
         }
 
         private void Navigation_Click(object sender, RoutedEventArgs e)
