@@ -93,7 +93,7 @@ namespace PCore.App
                 string cpuClock = sensors.CpuClock.HasValue ? sensors.CpuClock.Value.ToString("0") + " МГц" : "нет данных";
                 string gpuClock = sensors.GpuClock.HasValue ? sensors.GpuClock.Value.ToString("0") + " МГц" : "нет данных";
                 SensorStatusText.Text = sensors.Status;
-                GpuUsageValue.Text = gpu.UtilizationPercent.HasValue ? gpu.UtilizationPercent.Value.ToString("0") + "%" : "Недоступно";
+                GpuUsageValue.Text = sensors.GpuLoad.HasValue ? sensors.GpuLoad.Value.ToString("0") + "%" : (gpu.UtilizationPercent.HasValue ? gpu.UtilizationPercent.Value.ToString("0") + "%" : "Недоступно");
                 GpuUsageDetail.Text = "Температура: " + gpuTemperature + " | Частота: " + gpuClock;
                 CpuUsageDetail.Text = "Температура: " + cpuTemperature + " | Частота: " + cpuClock;
                 CpuPageSensorDetail.Text = "Температура: " + cpuTemperature + " | Частота: " + cpuClock;
