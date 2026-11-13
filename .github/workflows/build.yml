@@ -1,5 +1,8 @@
 name: Build PCore
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ "main" ]
@@ -45,3 +48,15 @@ jobs:
             PCore.App/bin/Release/PCore.exe
             artifacts/PCore-Setup-x64.exe
           if-no-files-found: error
+
+      - name: Publish latest Windows installer
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: PCore Latest
+          make_latest: true
+          prerelease: false
+          files: artifacts/PCore-Setup-x64.exe
+          overwrite_files: true
+          fail_on_unmatched_files: true
