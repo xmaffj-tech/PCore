@@ -18,6 +18,12 @@ jobs:
       - name: Set up MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      - name: Set up NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore PCore.sln -NonInteractive
+
       - name: Build PCore
         run: msbuild PCore.sln /m /p:Configuration=Release /p:Platform="Any CPU" /verbosity:minimal
 
