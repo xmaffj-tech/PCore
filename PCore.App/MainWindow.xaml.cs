@@ -268,6 +268,22 @@ namespace PCore.App
         {
             DynamicPageContent.Children.Clear();
             AddText(section, 19, true);
+            if (section == "Оптимизация")
+            {
+                AddText("Профиль слабого ПК уменьшает нагрузку именно от PCore: реже обновляет мониторинг и снижает приоритет процесса приложения. Он не отключает службы Windows, не завершает чужие процессы и не меняет системные настройки без вашего согласия.", 12, false);
+                AddText("Рекомендуемый режим", 14, true);
+                AddAction("Включить профиль слабого ПК", ApplyLowResourceProfile_Click);
+                AddAction("Вернуть обычный режим PCore", RestoreNormalProfile_Click);
+                AddText("Дополнительные настройки Windows", 14, true);
+                AddText("Открывайте системные параметры Windows и самостоятельно выбирайте, что менять. Перед отключением автозагрузки убедитесь, что приложение вам не требуется.", 11, false);
+                AddAction("Управление автозагрузкой Windows", OpenStartupSettings_Click);
+                AddAction("Питание и режим энергосбережения", OpenPowerSettings_Click);
+                AddAction("Игровой режим Windows", OpenGameModeSettings_Click);
+                AddAction("Настройки графики Windows", OpenGraphicsSettings_Click);
+                AddAction("Контроль памяти и хранилища", OpenStorageSettings_Click);
+                AddText("Важно: PCore пока не выполняет автоматическую очистку реестра, удаление системных файлов, отключение служб или разгон. Такие действия могут навредить системе и не гарантируют ускорения.", 11, false);
+                return;
+            }
             if (section == "Хранилище")
             {
                 foreach (StorageDrive drive in _storageAnalyzer.ReadDrives())
@@ -328,6 +344,60 @@ namespace PCore.App
             }
             AddText("Раздел создан. Дополнительные функции будут подключаться после проверки совместимости.", 12, false);
         }
+
+        private void ApplyLowResourceProfile_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _settings.RefreshSeconds = 5;
+                _settingsStore.Save(_settings);
+                _monitorTimer.Interval = TimeSpan.FromSeconds(5);
+                System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+                AddText("Профиль слабого ПК включён: мониторинг PCore обновляется раз в 5 секунд, приоритет приложения снижен. Изменения применены только к PCore.", 12, true);
+            }
+            catch (Exception ex)
+            {
+                AddText("Не удалось полностью применить профиль: " + ex.Message, 11, false);
+            }
+        }
+
+        private void RestoreNormalProfile_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _settings.RefreshSeconds = 1;
+                _settingsStore.Save(_settings);
+                _monitorTimer.Interval = TimeSpan.FromSeconds(1);
+                System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
+                AddText("Обычный режим PCore восстановлен: интервал мониторинга — 1 секунда, приоритет процесса — обычный.", 12, true);
+            }
+            catch (Exception ex)
+            {
+                AddText("Не удалось полностью восстановить обычный режим: " + ex.Message, 11, false);
+            }
+        }
+
+        private void OpenWindowsSettings(string settingsUri)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = settingsUri,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                AddText("Не удалось открыть параметры Windows: " + ex.Message, 11, false);
+            }
+        }
+
+        private void OpenStartupSettings_Click(object sender, RoutedEventArgs e) { OpenWindowsSettings("ms-settings:startupapps"); }
+        private void OpenPowerSettings_Click(object sender, RoutedEventArgs e) { OpenWindowsSettings("ms-settings:powersleep"); }
+        private void OpenGameModeSettings_Click(object sender, RoutedEventArgs e) { OpenWindowsSettings("ms-settings:gaming-gamemode"); }
+        private void OpenGraphicsSettings_Click(object sender, RoutedEventArgs e) { OpenWindowsSettings("ms-settings:display-advancedgraphics"); }
+        private void OpenStorageSettings_Click(object sender, RoutedEventArgs e) { OpenWindowsSettings("ms-settings:storagesense"); }
 
         private void RunBenchmark_Click(object sender, RoutedEventArgs e)
         {
@@ -402,10 +472,11 @@ namespace PCore.App
                 return;
             }
 
-            PageSubtitle.Text = "Раздел PCore";
+            PageSubtitle.Text = section == "Оптимизация" ? "Инструменты и безопасные настройки для маломощных компьютеров" : "Раздел PCore";
             PlaceholderContent.Visibility = Visibility.Visible;
             PlaceholderTitle.Text = section;
-            PlaceholderDescription.Text = "Этот раздел пока находится в разработке. Его функциональность будет добавлена поэтапно.";
+            PlaceholderDescription.Text = "Выберите действие ниже.";
+            BuildDynamicPage(section);
         }
     }
 }
