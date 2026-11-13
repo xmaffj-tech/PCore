@@ -4,6 +4,7 @@
 #define MyAppExeName "PCore.exe"
 
 [Setup]
+SetupIconFile=..\PCore.App\PCore.ico
 AppId={{8A3D3B3B-76B4-4C67-AC8D-83B06C9E1F24}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
