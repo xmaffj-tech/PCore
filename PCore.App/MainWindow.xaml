@@ -32,6 +32,7 @@
                     <Button Content="  Сеть" Tag="Сеть" Click="Navigation_Click" Margin="0,1"/>
                     <Button Content="  Процессы" Tag="Процессы" Click="Navigation_Click" Margin="0,1"/>
                     <Button Content="  Оборудование" Tag="Оборудование" Click="Navigation_Click" Margin="0,1"/>
+                    <Button Content="  Датчики" Tag="Датчики" Click="Navigation_Click" Margin="0,1"/>
 
                     <TextBlock Text="ИНСТРУМЕНТЫ" Foreground="#686C75" FontSize="10" FontWeight="SemiBold" Margin="8,25,0,8"/>
                     <Button Content="  Оптимизация" Tag="Оптимизация" Click="Navigation_Click" Margin="0,1"/>
@@ -75,7 +76,7 @@
                 <Border HorizontalAlignment="Right" VerticalAlignment="Center" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="8" Padding="12,8">
                     <StackPanel Orientation="Horizontal">
                         <Ellipse Width="7" Height="7" Fill="#D9B56D" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                        <TextBlock Text="Датчики ещё не подключены" FontSize="11" Foreground="#B9BBC1"/>
+                        <TextBlock x:Name="SensorStatusText" Text="Подключение аппаратных датчиков..." FontSize="11" Foreground="#B9BBC1"/>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -171,7 +172,7 @@
                 <StackPanel>
                     <TextBlock Text="Процессор" FontSize="17" FontWeight="SemiBold"/>
                     <TextBlock x:Name="CpuPageValue" Text="Ожидание измерения..." FontSize="30" FontWeight="SemiBold" Margin="0,14,0,4"/>
-                    <TextBlock Text="Общая загрузка процессора по системному счётчику Windows." Foreground="#858891"/>
+                    <TextBlock x:Name="CpuPageSensorDetail" Text="Загрузка, температура и частоты CPU" Foreground="#858891" TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
             <Border x:Name="RamContent" Grid.Row="2" Visibility="Collapsed" Background="#191B20" BorderBrush="#292C33" BorderThickness="1" CornerRadius="12" Padding="24">
