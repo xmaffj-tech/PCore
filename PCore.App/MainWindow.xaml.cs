@@ -19,6 +19,8 @@ namespace PCore.App
         private readonly SettingsStore _settingsStore = new SettingsStore();
         private UserSettings _settings;
         private readonly GpuMonitor _gpuMonitor = new GpuMonitor();
+        private readonly HardwareSensorMonitor _hardwareSensorMonitor = new HardwareSensorMonitor();
+        private HardwareSensorSnapshot _lastHardwareSensors;
         private readonly StorageAnalyzer _storageAnalyzer = new StorageAnalyzer();
         private readonly StartupManager _startupManager = new StartupManager();
         private readonly GameCatalog _gameCatalog = new GameCatalog();
@@ -84,8 +86,17 @@ namespace PCore.App
                     catch (Exception) { }
                 }
                 GpuSnapshot gpu = _gpuMonitor.Read();
+                _lastHardwareSensors = _hardwareSensorMonitor.Read();
+                HardwareSensorSnapshot sensors = _lastHardwareSensors;
+                string cpuTemperature = sensors.CpuTemperature.HasValue ? sensors.CpuTemperature.Value.ToString("0") + " °C" : "нет показаний";
+                string gpuTemperature = sensors.GpuTemperature.HasValue ? sensors.GpuTemperature.Value.ToString("0") + " °C" : "нет показаний";
+                string cpuClock = sensors.CpuClock.HasValue ? sensors.CpuClock.Value.ToString("0") + " МГц" : "нет данных";
+                string gpuClock = sensors.GpuClock.HasValue ? sensors.GpuClock.Value.ToString("0") + " МГц" : "нет данных";
+                SensorStatusText.Text = sensors.Status;
                 GpuUsageValue.Text = gpu.UtilizationPercent.HasValue ? gpu.UtilizationPercent.Value.ToString("0") + "%" : "Недоступно";
-                GpuUsageDetail.Text = gpu.Status + " | Температура: недоступно";
+                GpuUsageDetail.Text = "Температура: " + gpuTemperature + " | Частота: " + gpuClock;
+                CpuUsageDetail.Text = "Температура: " + cpuTemperature + " | Частота: " + cpuClock;
+                CpuPageSensorDetail.Text = "Температура: " + cpuTemperature + " | Частота: " + cpuClock;
                 CpuUsageValue.Text = snapshot.CpuUsage.HasValue ? snapshot.CpuUsage.Value.ToString("0", CultureInfo.InvariantCulture) + "%" : "Ожидание...";
                 CpuUsageDetail.Text = snapshot.CpuUsage.HasValue ? "Текущая загрузка процессора" : "Сбор первого измерения";
                 RamUsageValue.Text = snapshot.RamUsedGb.HasValue && snapshot.RamTotalGb.HasValue
@@ -243,6 +254,7 @@ namespace PCore.App
         {
             _monitorTimer.Stop();
             if (_systemMonitor != null) _systemMonitor.Dispose();
+            _hardwareSensorMonitor.Dispose();
             base.OnClosed(e);
         }
 
@@ -268,6 +280,41 @@ namespace PCore.App
         {
             DynamicPageContent.Children.Clear();
             AddText(section, 19, true);
+            if (section == "Датчики" || section == "Видеокарта")
+            {
+                if (_lastHardwareSensors == null)
+                    _lastHardwareSensors = _hardwareSensorMonitor.Read();
+
+                AddText("Аппаратные датчики", 15, true);
+                AddText(_lastHardwareSensors.Status, 11, false);
+                AddText("Температуры, частоты, напряжения, нагрузки, обороты вентиляторов и доступные показатели памяти/накопителей считываются непосредственно с оборудования. Набор зависит от поддержки датчиков производителем.", 11, false);
+                AddAction("Обновить датчики", (sender, args) =>
+                {
+                    UpdateMonitoring();
+                    BuildDynamicPage(section);
+                });
+
+                int shownSensors = 0;
+                foreach (HardwareSensorReading sensor in _lastHardwareSensors.Sensors)
+                {
+                    bool isGpu = sensor.HardwareType.IndexOf("Gpu", StringComparison.OrdinalIgnoreCase) >= 0;
+                    if (section == "Видеокарта" && !isGpu) continue;
+
+                    string range = "";
+                    if (sensor.Minimum.HasValue || sensor.Maximum.HasValue)
+                        range = " (мин.: " + (sensor.Minimum.HasValue ? sensor.Minimum.Value.ToString("0.##") : "—") +
+                            ", макс.: " + (sensor.Maximum.HasValue ? sensor.Maximum.Value.ToString("0.##") : "—") + ")";
+                    AddText(sensor.HardwareName + " | " + sensor.Name + ": " + sensor.DisplayValue + range, 12, false);
+                    shownSensors++;
+                }
+
+                if (shownSensors == 0)
+                    AddText(section == "Видеокарта"
+                        ? "Датчики видеокарты пока не предоставляют показания. Попробуйте запустить PCore от имени администратора и обновить драйвер видеокарты."
+                        : "Датчики пока не предоставляют показания. Некоторые устройства требуют запуска от имени администратора или не поддерживаются прошивкой.", 12, false);
+                return;
+            }
+
             if (section == "Оптимизация")
             {
                 AddText("Профиль слабого ПК уменьшает нагрузку именно от PCore: реже обновляет мониторинг и снижает приоритет процесса приложения. Он не отключает службы Windows, не завершает чужие процессы и не меняет системные настройки без вашего согласия.", 12, false);
