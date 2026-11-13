@@ -34,6 +34,7 @@
                     <Button Content="  Оборудование" Tag="Оборудование" Click="Navigation_Click" Margin="0,1"/>
 
                     <TextBlock Text="ИНСТРУМЕНТЫ" Foreground="#686C75" FontSize="10" FontWeight="SemiBold" Margin="8,25,0,8"/>
+                    <Button Content="  Оптимизация" Tag="Оптимизация" Click="Navigation_Click" Margin="0,1"/>
                     <Button Content="  Игровой центр" Tag="Игровой центр" Click="Navigation_Click" Margin="0,1"/>
                     <Button Content="  Overlay" Tag="Overlay" Click="Navigation_Click" Margin="0,1"/>
                     <Button Content="  Widgets" Tag="Widgets" Click="Navigation_Click" Margin="0,1"/>
