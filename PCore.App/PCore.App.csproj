@@ -39,6 +39,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
+    <Reference Include="LibreHardwareMonitorLib"><HintPath>..\\packages\\LibreHardwareMonitorLib.0.9.6\\lib\\net472\\LibreHardwareMonitorLib.dll</HintPath></Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -54,6 +55,8 @@
     <Compile Include="HistoryStore.cs" />
     <Compile Include="SettingsStore.cs" />
     <Compile Include="GpuMonitor.cs" />
+    <Compile Include="HardwareSensorMonitor.cs" />
+    <None Include="packages.config" />
     <Compile Include="StartupManager.cs" />
     <Compile Include="StorageAnalyzer.cs" />
     <Compile Include="BenchmarkService.cs" />
