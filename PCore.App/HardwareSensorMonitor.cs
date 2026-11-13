@@ -23,7 +23,10 @@ namespace PCore.App
                 IsMotherboardEnabled = true,
                 IsControllerEnabled = true,
                 IsNetworkEnabled = true,
-                IsStorageEnabled = true
+                IsStorageEnabled = true,
+                IsPowerMonitorEnabled = true,
+                IsPsuEnabled = true,
+                IsBatteryEnabled = true
             };
 
             try
@@ -95,15 +98,25 @@ namespace PCore.App
             switch (type)
             {
                 case SensorType.Temperature: return "°C";
-                case SensorType.Fan: return "RPM";
+                case SensorType.Current: return "А";
+                case SensorType.Frequency: return "Гц";
+                case SensorType.Fan: return "об/мин";
                 case SensorType.Clock: return "МГц";
                 case SensorType.Voltage: return "В";
                 case SensorType.Power: return "Вт";
                 case SensorType.Load: return "%";
                 case SensorType.Control: return "%";
                 case SensorType.Flow: return "л/ч";
-                case SensorType.Data: return "ГБ";
-                case SensorType.SmallData: return "МБ";
+                case SensorType.Level: return "%";
+                case SensorType.Factor: return "";
+                case SensorType.Data: return "Б";
+                case SensorType.Throughput: return "Б/с";
+                case SensorType.TimeSpan: return "с";
+                case SensorType.Timing: return "нс";
+                case SensorType.Energy: return "мВт·ч";
+                case SensorType.Noise: return "дБА";
+                case SensorType.Conductivity: return "мкСм/см";
+                case SensorType.Humidity: return "%";
                 default: return "";
             }
         }
